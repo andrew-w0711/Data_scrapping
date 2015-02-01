@@ -1,0 +1,30 @@
+var EightyApp = function() {
+        this.processDocument = function(html, url, headers, status, jQuery) {
+                var app = this;
+                var $ = jQuery;
+                var $html = app.parseHtml(html, $);
+                var object = {};
+                if(url.indexOf("t_pn") != -1)
+                {
+                        object.buyurl = url;
+                        object.manufacturer= $html.filter('h1').next().children().text();
+                        object.manufacturerid = url.split("t_pn")[1].split("=")[1];
+                        object.prodname= $html.filter('h1').text();
+                        object.price= $html.filter('ul[class="productPricing"]').last().filter('span[class="price"]').text().split("$")[1];
+                }
+
+                return JSON.stringify(object);
+        }
+}
+
+try {
+        // Testing
+        module.exports = function(EightyAppBase) {
+                EightyApp.prototype = new EightyAppBase();
+                return new EightyApp();
+        }
+} catch(e) {
+        // Production
+        console.log("Eighty app exists.");
+        EightyApp.prototype = new EightyAppBase();
+}
